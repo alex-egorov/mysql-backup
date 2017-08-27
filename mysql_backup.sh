@@ -10,6 +10,9 @@ BACKUP_PATH="${BACKUP_PATH:=/backup}"
 KEEP_FILES="${KEEP_FILES:=0}"
 
 parse_args() {
+  if [ "$1" = "--help" ]; then
+    show_help && exit 0
+  fi
   ### Parse first agrument
   if [ "$#" -ge 1 ]; then
     ACTION="$1"
@@ -58,8 +61,29 @@ parse_args() {
 }
 
 show_help() {
-  echo << EOF
-  Usage: mysql_backup.sh backup|restore [args]
+  cat << EOF
+Usage: mysql_backup.sh [ACTION] [OPTIONS...]
+
+Actions:
+  b,  backup                            Backup database(s) to the file
+  r,  restore                           Restore database from a file
+
+Options:
+  -h, --host          MYSQL_HOST        Host of mysql server
+  -u, --user          MYSQL_USER        Username to login to mysql server
+  -p, --password      MYSQL_PASSWORD    Password to use when connecting to server.
+  -d, --database      MYSQL_DATABASE    Mysql database to backup/restore.
+                                        If not specified during backup, it uses flag --all-databases to backup
+                                        all databases. For restore action this parameter must present
+  -f, --backup_file   BACKUP_FILE       Filename to backup/restore from. Musql be *.sql only.
+                                        Archive extension will be added during backup/restore process
+      --backup_path   BACKUP_PATH       Path to directory to keep backup files
+  -k, --keep_files    KEEP_FILES        Number of files to keep in BACKUP_PATH directory. Other oldest files will be
+                                        deleted during backup
+      --opts          MYSQL_OPTIONS     Any other options, that will be put to the backup/restore command
+
+
+
 EOF
 }
 
